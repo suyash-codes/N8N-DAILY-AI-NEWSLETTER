@@ -1,0 +1,423 @@
+{
+  "name": "AI NEWSLETTER",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        -64
+      ],
+      "id": "7665ab6e-40b5-40e7-8c46-2c59785043e7",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://newsapi.org/v2/everything ",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "Apple"
+            },
+            {
+              "name": "q",
+              "value": "UK"
+            },
+            {
+              "name": "from",
+              "value": "2025-07-29"
+            },
+            {
+              "name": "sortBy",
+              "value": "popularity"
+            },
+            {
+              "name": "q",
+              "value": "technology"
+            },
+            {
+              "name": "d",
+              "value": "apiKey=0ddf8d9380034282a38832e927419b77"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -176,
+        32
+      ],
+      "id": "0e04a8d8-a168-44d0-bdc6-3ff8435dbff3",
+      "name": "HTTP Request",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 100,
+      "notesInFlow": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "P6alYuClrN99Ol9k",
+          "name": "Bearer Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "Q9z8u4yL413KASTf",
+          "name": "Header Auth account 3"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "http://feeds.bbci.co.uk/news/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        -160
+      ],
+      "id": "efef34f4-3219-4004-b362-b7fa039a63c1",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "articles",
+        "include": "selectedOtherFields",
+        "fieldsToInclude": "url",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        48,
+        32
+      ],
+      "id": "0f388f0b-9550-4c05-844b-0796b7cb9893",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        272,
+        -64
+      ],
+      "id": "c5e947dc-0491-4bf7-b97c-e5cd95d30a56",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "pubDate"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -64
+      ],
+      "id": "6fd7f75a-ee3d-486d-b448-6945c90b33cb",
+      "name": "Sort"
+    },
+    {
+      "parameters": {
+        "maxItems": 20
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        944,
+        -64
+      ],
+      "id": "761b0b70-ecdf-4b4d-ada8-ac4d0b9a7fef",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.summary }}",
+        "options": {
+          "systemMessage": "You are an AI newsletter assistant.\\n\\nYour job is to generate a Daily AI News Roundup using 12–15 real and recent global news stories from the last 24 hours.\\n\\nWrite clear, concise, factual summaries with specific names, locations, companies, and outcomes. Avoid vague language, templates, or placeholder content.\\n\\nYou must produce two separate outputs, one for each tool:\\n\\n📬 1. Gmail Output (HTML Email)\\n\\n- Format: Valid, clean HTML only (no markdown)\\n- Subject Line: 📬 Daily AI Digest – [2–3 top stories, e.g., “UN Summit, AI Milestones, Market Crash”]\\n- Sender Name: 📬 The AI Digest\\n\\nEmail Body:\\n<h2>📰 Today’s Top Headlines</h2>\\n<p>Hello! Here's a quick look at today’s most important global stories:</p>\\n\\n<p>🌍 <b>[Headline]</b>: One-sentence summary with factual details.</p>\\n<p>💼 <b>[Headline]</b>: ...</p>\\n<!-- Include exactly 12-15 total items. Vary emojis like 🧠 ⚖️ 📉 🛰️ 🌿 -->\\n\\n<p>Thanks for reading!<br>Built by Div ❤️</p>\\n\\nRules:\\n- Use verified stories published in the past 24 hours\\n- Include real names, countries, organizations, leaders, and companies\\n- No markdown, templates, placeholders, or generic headlines\\n- Output only valid HTML, ready for Gmail\\n\\n💬 2. Discord Output (Markdown)\\n\\n- Format: Valid, clean Discord-compatible Markdown\\n\\nStart with 2–3 major topics:\\n📰 **Today’s Top Headlines** – [e.g. “UN Summit, AI Regulation, Market Crash”]\\n\\nThen list:\\n🌍 **[Headline]**: One-line summary with real, specific context.\\n\\n💼 **[Headline]**: ...\\n\\n<!-- Include exactly 12-15 total items. Leave one blank line between each. Vary emojis like 🧠 ⚖️ 📉 🛰️ 🌿 -->\\n\\nEnd with:\\n---\\n*Built by Div ❤️*\\n\\nRules:\\n- Use only stories from the past 24 hours\\n- Use real-world names, places, and facts\\n- No HTML, placeholder text, or broken markdown\\n- Output only Discord-ready Markdown\\n\\nFinal Instructions:\\n- Mention 2–3 major topics at the top of both outputs\\n- Output both formats together every time\\n- Be factual, real, and properly formatted\\n- Do not include speculative, hallucinated, or outdated content\"\n        "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        1424,
+        -64
+      ],
+      "id": "76d0280a-4760-44de-b52a-27e6165522a6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1392,
+        160
+      ],
+      "id": "78f3179f-f8f4-4c66-acd7-c63e33834eb7",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "AAeX32hO5usYt4n5",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "suyash.alter@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1520,
+        160
+      ],
+      "id": "e9c1fe06-41c6-4c7a-95e5-b7c45694a7f0",
+      "name": "Send a message in Gmail",
+      "webhookId": "82202bd1-2345-426d-8a7e-e4f95eb15f74",
+      "executeOnce": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "j0jtRmH4SAzNIslG",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Sends data to DiscordYou are an AI newsletter assistant.\\n\\nYour job is to generate a Daily AI News Roundup using 12–15 real and recent global news stories from the last 24 hours.\\n\\nWrite clear, concise, factual summaries with specific names, locations, companies, and outcomes. Avoid vague language, templates, or placeholder content.\\n\\nYou must produce two separate outputs, one for each tool:\\n\\n📬 1. Gmail Output (HTML Email)\\n\\n- Format: Valid, clean HTML only (no markdown)\\n- Subject Line: 📬 Daily AI Digest – [2–3 top stories, e.g., “UN Summit, AI Milestones, Market Crash”]\\n- Sender Name: 📬 The AI Digest\\n\\nEmail Body:\\n<h2>📰 Today’s Top Headlines</h2>\\n<p>Hello! Here's a quick look at today’s most important global stories:</p>\\n\\n<p>🌍 <b>[Headline]</b>: One-sentence summary with factual details.</p>\\n<p>💼 <b>[Headline]</b>: ...</p>\\n<!-- Include exactly 12-15 total items. Vary emojis like 🧠 ⚖️ 📉 🛰️ 🌿 -->\\n\\n<p>Thanks for reading!<br>Built by Div ❤️</p>\\n\\nRules:\\n- Use verified stories published in the past 24 hours\\n- Include real names, countries, organizations, leaders, and companies\\n- No markdown, templates, placeholders, or generic headlines\\n- Output only valid HTML, ready for Gmail\\n\\n💬 2. Discord Output (Markdown)\\n\\n- Format: Valid, clean Discord-compatible Markdown\\n\\nStart with 2–3 major topics:\\n📰 **Today’s Top Headlines** – [e.g. “UN Summit, AI Regulation, Market Crash”]\\n\\nThen list:\\n🌍 **[Headline]**: One-line summary with real, specific context.\\n\\n💼 **[Headline]**: ...\\n\\n<!-- Include exactly 12-15 total items. Leave one blank line between each. Vary emojis like 🧠 ⚖️ 📉 🛰️ 🌿 -->\\n\\nEnd with:\\n---\\n*Built by Div ❤️*\\n\\nRules:\\n- Use only stories from the past 24 hours\\n- Use real-world names, places, and facts\\n- No HTML, placeholder text, or broken markdown\\n- Output only Discord-ready Markdown\\n\\nFinal Instructions:\\n- Mention 2–3 major topics at the top of both outputs\\n- Output both formats together every time\\n- Be factual, real, and properly formatted\\n- Do not include speculative, hallucinated, or outdated content\"",
+        "authentication": "webhook",
+        "content": "={{ $('Limit').item.json.title }}{{ $('Limit').item.json.link }}{{ $('Limit').item.json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discordTool",
+      "typeVersion": 2,
+      "position": [
+        1728,
+        160
+      ],
+      "id": "8ded703d-6f9b-4403-aab4-78201b0ba899",
+      "name": "Discord",
+      "webhookId": "88f84c2c-3c47-4138-9d01-f929ef3163f5",
+      "alwaysOutputData": false,
+      "executeOnce": true,
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "enQAy0segyL2CFoV",
+          "name": "Discord Bot account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  let normalized = {};\n  for (let key in item.json) {\n    let value = item.json[key];\n    if (typeof value === \"string\") {\n      normalized[key] = value.toLowerCase();\n    } else {\n      normalized[key] = value;\n    }\n  }\n  return { json: normalized };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        -64
+      ],
+      "id": "c7786a2a-68ca-4aaf-92c3-8a907d7a5dc6",
+      "name": "normalize"
+    },
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  let title = item.json.title || \"\";\n  let description = item.json.description || \"\";\n\n  // Simple summary: just title + first 200 chars of description\n  let summary = `${title} — ${description.slice(0, 200)}...`;\n\n  return {\n    json: {\n      title,\n      summary\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        -64
+      ],
+      "id": "fa9d0281-df1d-4272-b105-b84df0902ca6",
+      "name": "summarize"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Sort",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort": {
+      "main": [
+        [
+          {
+            "node": "normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Discord": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "normalize": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "summarize": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d849a38e-c0da-44d3-aea8-e357d1b39ff1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "76d664f94bff162ae70c8d0e3d44ad12dbc1fb2424cd8ae0c922fbbc131a7b66"
+  },
+  "id": "ftpGUtvi4x4Hn51h",
+  "tags": []
+}
