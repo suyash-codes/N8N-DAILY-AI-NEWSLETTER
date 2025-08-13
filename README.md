@@ -139,5 +139,6 @@ You can add nodes that:
 📰 Topic-based newsletters
 
 👨‍💻 Author
-Built by Suyash ❤️
+Built by Suyash ❤
 www.linkedin.com/in/suyashsinghgusain
+https://github.com/suyash-codes
