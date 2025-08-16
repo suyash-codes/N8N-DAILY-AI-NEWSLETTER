@@ -1,9 +1,9 @@
-🗞️ AI Daily Newsletter Bot (n8n) – Built by Suyash ❤️
+🗞️ AI Daily Newsletter Bot (n8n) 
 This project is a fully automated AI-powered newsletter generator using n8n, designed to deliver daily world news summaries in HTML email (via Gmail) and Discord (Markdown).
 It integrates BBC RSS Feeds, NewsAPI, and Google Gemini for fact-checked summaries, with built-in normalization and error handling.
 
 📌 Features
-⏰ Daily Scheduled Trigger (8 AM IST)
+⏰ Daily Scheduled Trigger (9 AM IST)
 
 📰 Combines trusted sources:
 
@@ -102,18 +102,16 @@ Copy
 Edit
 AI-Newsletter/
 ├── README.md                # This file
-├── AI-Newsletter.json       # Main newsletter workflow
-├── assets/                  # Screenshots and visuals
-│   ├── workflow.png
-│   ├── gmail-example.png
-│   └── discord-example.png
+├── daily-Newsletter.json       # Main newsletter workflow
+├── main_workflow.png
+
 <h2>📰 Today’s Top Headlines</h2>
 <p>Hello! Here's a quick look at today’s most important global stories:</p>
 
 <p>🌍 <b>UK Parliament Passes AI Regulation Bill</b>: New law mandates AI transparency for major tech firms.</p>
 <p>🛰️ <b>ISRO Successfully Launches Gaganyaan Module</b>: Prepares for crewed space mission in 2026.</p>
 
-<p>Thanks for reading!<br>Built by Suyash ❤️</p>
+<p>Thanks for reading!<br>Built by Suyash </p>
 📰 **Today’s Top Headlines** – AI Bill, ISRO Launch, Global Markets
 
 🌍 **UK Passes AI Regulation Bill**: New transparency rules for AI giants.
@@ -121,23 +119,6 @@ AI-Newsletter/
 🛰️ **ISRO Launches Gaganyaan Module**: Major milestone toward crewed space mission.
 
 ---
-*Built by Suyash ❤️*
-🚨 Optional Error Handling
-You can add nodes that:
-
-❌ Send Discord alerts if NewsAPI fails (quota, invalid key, timeout)
-
-❌ Send Discord alerts if Gemini AI Agent fails
-
-💡 Future Upgrades
-🔄 Slack or Telegram delivery
-
-🌍 Multi-language summaries
-
-📊 Engagement analytics
-
-📰 Topic-based newsletters
-
 👨‍💻 Author
 Built by Suyash ❤
 www.linkedin.com/in/suyashsinghgusain
